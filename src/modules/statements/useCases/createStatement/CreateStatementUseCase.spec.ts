@@ -2,6 +2,8 @@ import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/I
 import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository";
 import { CreateStatementUseCase } from "./CreateStatementUseCase";
+import { OperationType } from "../../entities/Statement";
+import { AppError } from "../../../../shared/errors/AppError";
 
 let createUserUseCase: CreateUserUseCase;
 let createStatementUseCase: CreateStatementUseCase;
@@ -24,10 +26,29 @@ describe("Create Statement", () => {
     })
 
     const statement = await createStatementUseCase.execute({
-      user_id: user.id,
-      type: "credit",
+      user_id: user.id as string,
+      type: OperationType.DEPOSIT,
       amount: 100.00,
       description: "test create statement"
     })
-  })
+
+    expect(statement).toHaveProperty("id");
+  });
+
+  it("Should not be able create a statement with user not exists", () => {
+    expect(async () => {
+      const user = await createUserUseCase.execute({
+        name: "create statement test",
+        email: "statement@test.com.br",
+        password: "123456",
+      });
+
+      await createStatementUseCase.execute({
+        user_id: "Incorrect id",
+        type: OperationType.DEPOSIT,
+        amount: 100.00,
+        description: "test create statement"
+      });
+    }).rejects.toBeInstanceOf(AppError);
+  });
 });
