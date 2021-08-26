@@ -41,8 +41,6 @@ describe("Get Statement Operation", () => {
       statement_id: statement.id as string,
     });
 
-    console.log(statementOperation);
-
     expect(statementOperation).toHaveProperty("id");
     expect(statementOperation).toHaveProperty("user_id");
   });
