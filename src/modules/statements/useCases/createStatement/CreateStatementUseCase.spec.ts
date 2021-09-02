@@ -37,7 +37,7 @@ describe("Create Statement", () => {
 
   it("Should not be able create a statement with user not exists", () => {
     expect(async () => {
-      const user = await createUserUseCase.execute({
+      await createUserUseCase.execute({
         name: "create statement test",
         email: "statement@test.com.br",
         password: "123456",

@@ -24,23 +24,21 @@ describe("Authenticate User", () => {
 
     await createUserUseCase.execute(user);
 
-    const result = await authenticateUserUseCase.execute({
+    const authenticated = await authenticateUserUseCase.execute({
       email: user.email,
-      password: user.password,
+      password: "authtestpass",
     })
 
-    expect(result).toHaveProperty("token");
+    expect(authenticated).toHaveProperty("token");
   });
 
   it("should not be able to authenticate user with incorrect password", () => {
     expect(async () => {
-      const user: ICreateUserDTO = {
+      const user = await createUserUseCase.execute({
         name: "authtest",
         email: "authtest@test.com",
         password: "authtestpass"
-      }
-
-      await createUserUseCase.execute(user);
+      })
 
       await authenticateUserUseCase.execute({
         email: user.email,
@@ -51,17 +49,15 @@ describe("Authenticate User", () => {
 
   it("should not be able to authenticate user with incorrect email", () => {
     expect(async () => {
-      const user: ICreateUserDTO = {
+      const user = await createUserUseCase.execute({
         name: "authtest",
         email: "authtest@test.com",
         password: "authtestpass"
-      }
-
-      await createUserUseCase.execute(user);
+      });
 
       await authenticateUserUseCase.execute({
         email: "incorrect email",
-        password: user.password,
+        password: "authtestpass",
       })
     }).rejects.toBeInstanceOf(AppError);
   });
